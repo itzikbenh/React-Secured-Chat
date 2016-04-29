@@ -1,0 +1,24 @@
+body {
+  padding-top: 80px;
+}
+
+.errors {
+  padding-bottom: 10px;
+}
+
+.jumbotron, .navbar {
+  background-color: #F67938;
+}
+
+nav ul li a, .navbar-brand{
+  color: white !important;
+}
+
+nav ul li a:hover, .active {
+  color: rgb(250, 196, 32) !important;
+}
+
+.jumboTitle {
+  color: white !important;
+  text-align: center;
+}
