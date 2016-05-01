@@ -35,7 +35,7 @@ export default () => {
             <Route path="/login" component={ Login } />
             <Route path="/register" component={ Register } />
             <Route path="/rooms" component={ Rooms } onEnter={requireLogin} />
-            <Route path="/rooms/:room" component={ Room } onEnter={requireLogin} />
+            <Route path="/rooms/:room" component={ Room } />
             <Route path="/update" component={ Update } onEnter={requireLogin} />
             <Route path="/updatepassword" component={ Update_password } onEnter={requireLogin} />
           </Route>
