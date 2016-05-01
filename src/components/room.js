@@ -17,7 +17,7 @@ class Room extends React.Component {
       message: "",
       errors: null,
     }
-    //We bind the "this" context to the component "this" context to make sure state is avaible in these functions
+    //We bind the "this" context to the component "this" context to make sure state is available in these functions
     this.handleMessageInput = this.handleMessageInput.bind(this)
     this.handleKeyPress     = this.handleKeyPress.bind(this)
     this.onSend             = this.onSend.bind(this)
