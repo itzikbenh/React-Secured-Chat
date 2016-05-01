@@ -12,6 +12,7 @@ class Update extends React.Component {
       email: "",
       username: "",
       buttonText: "Update",
+      flash: null,
       errors: []
     }
     this.handleEmailChange    = this.handleEmailChange.bind(this)
@@ -58,7 +59,7 @@ class Update extends React.Component {
         this.setState({buttonText: "Update"})
         console.log(data);
         this.props.setUser(data);
-        hashHistory.push('/')
+        this.setState({flash: data.flash})
       }.bind(this),
       error: function(error) {
         console.log("original error: ", error);
@@ -85,6 +86,7 @@ class Update extends React.Component {
   render(){
     return (
       <div className="col-md-3" style={styles.divRegisterStyle}>
+        {this.state.flash}
         <Errors errors={this.state.errors}/>
         <form>
           <div className="form-group">

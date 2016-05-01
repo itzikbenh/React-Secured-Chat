@@ -11,9 +11,7 @@ const user = (state = initialState , action) => {
         isLoggedIn: true,
       })
     case 'LOGOUT_USER':
-      return Object.assign({}, state, {
-        isLoggedIn: false
-      })
+      return initialState;
     default:
       return state;
   }

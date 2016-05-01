@@ -14,9 +14,41 @@ export const logOutUser = () => {
   }
 }
 
+export const setRoomsList = (rooms) => {
+  return {
+    type: 'SET_ROOMS_LIST',
+    rooms: rooms
+  }
+}
+
+export const addRoom = (room) => {
+  return {
+    type: 'ADD_ROOM',
+    room: room
+  }
+}
+
+//Async action
+export function getRooms() {
+  return function(dispatch) {
+    $.ajax({
+      type: 'GET',
+      url: "http://localhost:4000/api/rooms/",
+      success: function(data) {
+        console.log("data is: ", data);
+        let rooms = data.rooms.map(room => room.name)
+        dispatch(setRoomsList(rooms));
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  }
+}
+
 //Async action
 export function verifyUserToken(routeType) {
-  return function (dispatch) {
+  return function(dispatch) {
     let accessToken = null;
     if(localStorage.getItem('TOKEN_STORAGE_KEY')) {
       accessToken = localStorage.getItem('TOKEN_STORAGE_KEY');
@@ -28,7 +60,6 @@ export function verifyUserToken(routeType) {
       url: 'http://localhost:4000/api/verifytoken/'+encodeURIComponent(accessToken),
       success: function(data) {
         console.log("data is: ", data);
-        //let accessToken = data.token;
         sessionStorage.setItem('TOKEN_STORAGE_KEY', accessToken);
         dispatch(setUser(data));
       },

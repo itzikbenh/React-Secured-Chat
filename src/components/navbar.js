@@ -27,7 +27,7 @@ class NavBar extends React.Component {
                   <span className="icon-bar"></span>
                   <span className="icon-bar"></span>
                 </button>
-                <Link to={ '/' } className="navbar-brand">React-Phoenix-Chat</Link>
+                <Link to='/' className="navbar-brand">React-Phoenix-Chat</Link>
               </div>
               <div className="collapse navbar-collapse" id="navbar">
                 <ul className="nav navbar-nav navbar-right">
@@ -54,9 +54,10 @@ class NavBar extends React.Component {
               <div className="collapse navbar-collapse" id="navbar">
                 <ul className="nav navbar-nav navbar-right">
                   <li> <a onClick={this.handleLogout.bind(this)} href="#">Logout</a></li>
+                  <li><Link to='/rooms'>Rooms</Link></li>
                   <li><Link to='/update'>Update</Link></li>
                   <li><Link to='/updatepassword'>Update Password</Link></li>
-                  <li><a href="#">{this.props.user.username}</a></li>
+                  <li><a>{this.props.user.username}</a></li>
                 </ul>
               </div>
             </div>

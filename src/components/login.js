@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from '../styles/style';
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux';
 import { setUser } from '../actions/index';
 import { hashHistory } from 'react-router';
 
@@ -13,7 +12,7 @@ class Login extends React.Component {
       password: "",
       buttonText: "Login",
       rememberMe: false,
-      errors: null
+      errors: []
     }
     this.handleEmailChange    = this.handleEmailChange.bind(this)
     this.handlePasswordChange = this.handlePasswordChange.bind(this)
@@ -62,15 +61,9 @@ class Login extends React.Component {
     });
   }
   render(){
-    let formErrors;
-    if (this.state.errors) {
-       formErrors = <Errors errors={this.state.errors}/>
-    } else {
-       formErrors = null
-    }
     return (
       <div className="col-md-3" style={styles.divRegisterStyle}>
-        {formErrors}
+        <Errors errors={this.state.errors}/>
         <form>
           <div className="form-group">
             <input
@@ -106,8 +99,8 @@ class Login extends React.Component {
 
 const Errors = (props) => {
   return (
-      <div className="alert alert-danger">
-         {props.errors.map((error, i) => <li key={i}> {error} </li>)}
+      <div className="errors">
+         {props.errors.map((error, i) => <li className="list-group-item list-group-item-danger" key={i}> {error} </li>)}
       </div>
   );
 }

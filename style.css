@@ -20,5 +20,25 @@ nav ul li a:hover, .active {
 
 .jumboTitle {
   color: white !important;
+}
+
+.center {
   text-align: center;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  margin-top: 15px;
+  background-color: rgb(250, 87, 32) !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.panel-body, .panel-default, .panel-heading, .panel-footer {
+  background-color: #F67938 !important;
+  color: white !important;
+}
+
+.messages {
+  list-style: none;
+  padding: 5px;
 }

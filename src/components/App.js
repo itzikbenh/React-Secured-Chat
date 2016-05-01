@@ -6,6 +6,8 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from '../reducers';
 
 import Register from './register';
+import Rooms from './rooms';
+import Room from './room';
 import Update from './update';
 import Update_password from './update_password';
 import Login from './login';
@@ -32,6 +34,8 @@ export default () => {
             <IndexRoute component={ Welcome } />
             <Route path="/login" component={ Login } />
             <Route path="/register" component={ Register } />
+            <Route path="/rooms" component={ Rooms } onEnter={requireLogin} />
+            <Route path="/rooms/:room" component={ Room } onEnter={requireLogin} />
             <Route path="/update" component={ Update } onEnter={requireLogin} />
             <Route path="/updatepassword" component={ Update_password } onEnter={requireLogin} />
           </Route>
