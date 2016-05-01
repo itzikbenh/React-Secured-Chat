@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles/style';
 import { connect } from 'react-redux'
-import { joinChannel, setUser } from '../actions/index';
+import { setUser } from '../actions/index';
 import { hashHistory } from 'react-router';
 //This file was copied from the Phoenix project.
 import { Socket } from "../phoenix";
@@ -46,7 +46,7 @@ class Room extends React.Component {
   }
 
   verifyUserTokenAndConnectToChannel(){
-    //User might required to be remembered so we check for his accessToken in both
+    //User might have required to be remembered so we check for his accessToken in both
     //localStorage and sessionStorage. If none exist verification will fail and he
     //would be redirected to the Login page.
     let accessToken = null;
@@ -67,14 +67,14 @@ class Room extends React.Component {
         this.props.actions.setUser(data);
         //Now that the user is successfully verified we can try to connect to the channel.
         //First we create an instance of the Socket. We must pass the User's accessToken
-        //because this is how the backend would verif him. After that we connect.
+        //because this is how the backend would verify him. After that we connect.
         let socket = new Socket("ws://localhost:4000/socket", {params: {token: accessToken}})
         socket.connect()
         //After we connected we need to pick a channel. We pick it based on the routes room parameter.
         //We set the channel as a local state because we will need it available in other functions.
         this.setState({channel: socket.channel("rooms:"+this.props.params.room)})
         //We use the channel state to join to that channel. On success we will get back
-        //any existing messages for that specific room/channe and we will render them with
+        //any existing messages for that specific room/channel and we will render them with
         //renderMessages function.
         this.state.channel.join()
           .receive("ok", resp => { this.renderMessages(resp.messages) })
@@ -150,7 +150,7 @@ class Room extends React.Component {
 //We must set a context type so we can use the setRouteLeaveHook
 Room.contextTypes = { router: React.PropTypes.object.isRequired }
 
-//Stateless component with rendering the messages
+//Stateless component which renders the messages
 const Messages = (props) => {
   return (
     <div>
