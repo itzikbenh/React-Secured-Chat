@@ -84,10 +84,9 @@ class Room extends React.Component {
         //The broadcasting events will be triggered from the backend after user sends a new message.
         this.state.channel.on("new_msg", payload => {
           console.log(payload)
-          let text = this.state.messages;
-          let msg = <div><b> {payload.user.username}:</b> {payload.body} </div>;
-          text.push(<div><b> {payload.user.username}:</b> {payload.body} </div>);
-          this.setState({messages: text});
+          let messages = this.state.messages;
+          messages.push(<div><b> {payload.user.username}:</b> {payload.body} </div>);
+          this.setState({messages: messages});
         });
       }.bind(this),
       error: function(error) {
