@@ -1,16 +1,16 @@
 import React from 'react';
-import styles from '../styles/style';
 import { connect } from 'react-redux'
-import { setUser, setMessagesList, addMessage } from '../actions/index';
+import { setUser, setMessagesList, addMessage, logOutUser, resetMessagesState} from '../actions/index';
 import { hashHistory } from 'react-router';
+import CircularProgress from 'material-ui/lib/circular-progress';
 //This file was copied from the Phoenix project.
 import { Socket } from "../phoenix";
 
 //Rooms component. Here we verify the user and on success we connect to the channel
 //based on the URL param.
 class Room extends React.Component {
-  constructor(props){
-    super(props);
+  constructor(){
+    super();
     this.state = {
       channel: null,
       message: ""
@@ -35,10 +35,11 @@ class Room extends React.Component {
 
   routerWillLeave() {
     console.log("leaving");
-    //When user leves page we will set the messages state to an empty array.
+    //When user leves page we will reset the messages state to its initial state.
     //that way when he joins another room it will start from fresh
     //and won't load for a fraction of a second messages that belong to the room he left
-    this.props.actions.setMessagesList([])
+    //it will also set isLoading back to true so we can show him the spinner on the next he accesses a room
+    this.props.actions.resetMessagesState()
     //If channel is set we will leave it when user leaves the page.
     //The reason we check that it's set first is because if our user is not verified that means
     //the channel is not set and we will get an error. You can't leaved a channel that wasn't even joined.
@@ -79,7 +80,7 @@ class Room extends React.Component {
         //any existing messages for that specific room/channel and we will render them with
         //renderMessages function.
         this.state.channel.join()
-          .receive("ok", resp => { this.renderMessages(resp.messages) })
+          .receive("ok", resp => { setTimeout(() => (this.renderMessages(resp.messages)), 2000) })
           .receive("error", resp => { console.log("Unable to join", resp) })
         //We create this event listener that will listen to "new_msg" broadcasting events.
         //so we can update the messages state.
@@ -92,8 +93,9 @@ class Room extends React.Component {
       }.bind(this),
       error: function(error) {
         console.log(error);
+        this.props.actions.logOutUser();
         hashHistory.push('/login');
-      },
+      }.bind(this),
     });
   }
   //Here we render any existent messages that we got from the backend on successful join to a channel.
@@ -121,29 +123,38 @@ class Room extends React.Component {
       this.setState({message: ""})
     }
   }
-  render(){
-    return (
-      <div className="col-md-6 col-md-offset-3">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title">Welcome to {this.props.params.room.toUpperCase()} Room</h3>
-            <div className="panel-body">
-              <Messages messages={this.props.messages} />
+  render() {
+    //We will load a spinner until Redux renderMessages action finished.
+    if(this.props.isLoading) {
+        return (
+          <div className="col-md-12 center">
+            <CircularProgress />
+          </div>
+        );
+    } else {
+        return (
+          <div className="col-md-6 col-md-offset-3">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <h3 className="panel-title">Welcome to {this.props.params.room.toUpperCase()} Room</h3>
+                <div className="panel-body">
+                  <Messages messages={this.props.messages} />
+                </div>
+              </div>
+              <div className="panel-footer">
+                <input
+                  className ="form-control"
+                  type="text"
+                  placeholder="add message"
+                  value={this.state.message}
+                  onChange={this.handleMessageInput}
+                  onKeyPress = {this.handleKeyPress}
+                  />
+              </div>
             </div>
           </div>
-          <div className="panel-footer">
-            <input
-              className ="form-control"
-              type="text"
-              placeholder="add message"
-              value={this.state.message}
-              onChange={this.handleMessageInput}
-              onKeyPress = {this.handleKeyPress}
-              />
-          </div>
-        </div>
-      </div>
-    );
+        );
+    }
   }
 }
 
@@ -162,7 +173,8 @@ const Messages = (props) => {
 //We subscribe to Redux state. For our purposes we only need the messages state.
 let mapStateToProps = (state) => {
   return {
-    messages: state.messages
+    messages: state.messages.messages,
+    isLoading: state.messages.isLoading
   };
 }
 
@@ -171,11 +183,13 @@ let mapStateToProps = (state) => {
 let mapDispatchToProps = (dispatch) => {
   return {
     actions: {
-      setUser: (user) => { dispatch(setUser(user)) },
+      addMessage: (message) => { dispatch(addMessage(message)) },
+      logOutUser: () => { dispatch(logOutUser()) },
+      resetMessagesState: () => { dispatch(resetMessagesState()) },
       setMessagesList: (messages) => { dispatch(setMessagesList(messages)) },
-      addMessage: (message) => { dispatch(addMessage(message)) }
+      setUser: (user) => { dispatch(setUser(user)) },
     }
   }
 }
-
+//We want to connect the component to Redux state and actions
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

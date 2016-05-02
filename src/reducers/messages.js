@@ -1,9 +1,20 @@
-const messages = (state = [] , action) => {
+let initialState = {
+  messages: [],
+  isLoading: true
+}
+const messages = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_MESSAGES_LIST':
-      return action.messages
+      return Object.assign({}, state, {
+        messages: action.messages,
+        isLoading: false,
+      })
     case 'ADD_MESSAGE':
-      return state.concat(action.message)
+      return Object.assign({}, state, {
+        messages: state.messages.concat(action.message)
+      })
+    case 'RESET_STATE':
+      return initialState
     default:
       return state;
   }

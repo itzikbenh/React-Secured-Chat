@@ -23,6 +23,8 @@ const store = createStore(
   applyMiddleware(thunkMiddleware)
 );
 
+console.log("hello from app")
+
 export default () => {
   const requireLogin = () => {
     store.dispatch(verifyUserToken("securedRoutes"));

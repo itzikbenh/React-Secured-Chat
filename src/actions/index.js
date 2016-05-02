@@ -42,6 +42,12 @@ export const addMessage = (message) => {
   }
 }
 
+export const resetMessagesState = () => {
+  return {
+    type: 'RESET_STATE',
+  }
+}
+
 //Async action
 export function getRooms() {
   return function(dispatch) {
