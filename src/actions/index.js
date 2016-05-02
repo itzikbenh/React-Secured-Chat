@@ -28,6 +28,20 @@ export const addRoom = (room) => {
   }
 }
 
+export const setMessagesList = (messages) => {
+  return {
+    type: 'SET_MESSAGES_LIST',
+    messages: messages
+  }
+}
+
+export const addMessage = (message) => {
+  return {
+    type: 'ADD_MESSAGE',
+    message: message
+  }
+}
+
 //Async action
 export function getRooms() {
   return function(dispatch) {

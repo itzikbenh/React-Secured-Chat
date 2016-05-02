@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles/style';
 import { connect } from 'react-redux'
-import { setUser } from '../actions/index';
+import { setUser, setMessagesList, addMessage } from '../actions/index';
 import { hashHistory } from 'react-router';
 //This file was copied from the Phoenix project.
 import { Socket } from "../phoenix";
@@ -13,9 +13,7 @@ class Room extends React.Component {
     super(props);
     this.state = {
       channel: null,
-      messages: [],
-      message: "",
-      errors: null,
+      message: ""
     }
     //We bind the "this" context to the component "this" context to make sure state is available in these functions
     this.handleMessageInput = this.handleMessageInput.bind(this)
@@ -37,6 +35,10 @@ class Room extends React.Component {
 
   routerWillLeave() {
     console.log("leaving");
+    //When user leves page we will set the messages state to an empty array.
+    //that way when he joins another room it will start from fresh
+    //and won't load for a fraction of a second messages that belong to the room he left
+    this.props.actions.setMessagesList([])
     //If channel is set we will leave it when user leaves the page.
     //The reason we check that it's set first is because if our user is not verified that means
     //the channel is not set and we will get an error. You can't leaved a channel that wasn't even joined.
@@ -84,9 +86,8 @@ class Room extends React.Component {
         //The broadcasting events will be triggered from the backend after user sends a new message.
         this.state.channel.on("new_msg", payload => {
           console.log(payload)
-          let messages = this.state.messages;
-          messages.push(<div><b> {payload.user.username}:</b> {payload.body} </div>);
-          this.setState({messages: messages});
+          let message = <div><b> {payload.user.username}:</b> {payload.body} </div>;
+          this.props.actions.addMessage(message)
         });
       }.bind(this),
       error: function(error) {
@@ -99,7 +100,7 @@ class Room extends React.Component {
   renderMessages(messages) {
     console.log("messaages are: ", messages)
     let messagesArray = messages.map(message => <div><b>{message.user}:</b> {message.body} </div>);
-    this.setState({messages: messagesArray});
+    this.props.actions.setMessagesList(messagesArray);
   }
 
   handleMessageInput(event) {
@@ -127,7 +128,7 @@ class Room extends React.Component {
           <div className="panel-heading">
             <h3 className="panel-title">Welcome to {this.props.params.room.toUpperCase()} Room</h3>
             <div className="panel-body">
-              <Messages messages={this.state.messages} />
+              <Messages messages={this.props.messages} />
             </div>
           </div>
           <div className="panel-footer">
@@ -158,15 +159,23 @@ const Messages = (props) => {
   );
 }
 
-//Anything returned from this function will end up as actions.props and would be available
+//We subscribe to Redux state. For our purposes we only need the messages state.
+let mapStateToProps = (state) => {
+  return {
+    messages: state.messages
+  };
+}
+
+//Anything returned from this function will end up as props.actions and would be available
 //to use in our component. This is how we can send actions.
 let mapDispatchToProps = (dispatch) => {
   return {
     actions: {
-      setUser: (user) => { dispatch(setUser(user)) }
+      setUser: (user) => { dispatch(setUser(user)) },
+      setMessagesList: (messages) => { dispatch(setMessagesList(messages)) },
+      addMessage: (message) => { dispatch(addMessage(message)) }
     }
   }
 }
-//First argument is always expected to be "mapStateToProps", but since we don't need to subscribe
-//to Redux state we will set it to be null.
-export default connect(null, mapDispatchToProps)(Room);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Room);
