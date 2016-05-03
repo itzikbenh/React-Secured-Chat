@@ -6,14 +6,15 @@ import { hashHistory, Link } from 'react-router';
 class NavBar extends React.Component {
   handleLogout(e) {
     e.preventDefault();
-    //Deletes the access token from both possible storgae
+    //Deletes the access token from both possible storages
     localStorage.removeItem('TOKEN_STORAGE_KEY');
     sessionStorage.removeItem('TOKEN_STORAGE_KEY');
-    //Send Action so the navbar will be rerendered
-    this.props.logOutUser()
+    //Send Action so the navbar will be rerendered to a state where user is logged out.
+    this.props.actions.logOutUser()
     hashHistory.push('/login')
   }
   render() {
+    //Based on if user is logged in we will render two different NavBars
     if(!this.props.user.isLoggedIn) {
         return (
           <nav className="navbar navbar-default navbar-fixed-top">
@@ -73,7 +74,9 @@ let mapStateToProps = (state) => {
 
 let mapDispatchToProps = (dispatch) => {
   return {
-    logOutUser: () => { dispatch(logOutUser()) }
+    actions: {
+      logOutUser: () => { dispatch(logOutUser()) }
+    }
   }
 }
 

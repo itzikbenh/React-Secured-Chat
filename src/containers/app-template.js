@@ -1,17 +1,15 @@
 import React from 'react';
 import Navbar from './navbar';
 import { connect } from 'react-redux'
-import { setUser, verifyUserToken } from '../actions/index';
-import { hashHistory } from 'react-router';
-import Login from './login';
-
+import { verifyUserToken } from '../actions/index';
 
 class AppTemplate extends React.Component {
-
+  //When User first hits the app we want to try to verify him so we can log him in right away.
   componentWillMount() {
-    this.props.verifyUserToken();
+    this.props.actions.verifyUserToken();
   }
 
+  //renders the Nav component and all the childrens we defined in the routes in the App.js file.
   render() {
     return (
       <div className="container">
@@ -22,18 +20,15 @@ class AppTemplate extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-}
-
-//Anything returned from this function will end up as props in the AppTemplate component
+//Here we define all actions we might need.
 let mapDispatchToProps = (dispatch) => {
-  //Whenever setUser is called, the result should ne passed to all of our reducers.
   return {
-    verifyUserToken: () => { dispatch(verifyUserToken()) }
+    actions: {
+      verifyUserToken: () => { dispatch(verifyUserToken()) }
+    }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppTemplate);
+//FIrst argument always is "mapStateToProps", but since we don't need to subscribe to Redux state
+//we just pass null instead.
+export default connect(null, mapDispatchToProps)(AppTemplate);

@@ -14,8 +14,6 @@
     "babel-loader": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
-    "es6-promise": "^3.1.2",
-    "isomorphic-fetch": "^2.2.1",
     "material-ui": "^0.14.4",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
@@ -25,7 +23,6 @@
     "react-tap-event-plugin": "^0.2.2",
     "redux": "^3.5.2",
     "redux-thunk": "^2.0.1",
-    "toastr": "^2.1.2",
     "webpack": "^1.12.8",
     "webpack-dev-server": "^1.12.1"
   }

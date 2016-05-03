@@ -1,28 +1,25 @@
 import React from 'react';
-import styles from '../styles/style';
 import Errors from '../components/errors';
 import { connect } from 'react-redux'
 import { setUser } from '../actions/index';
-import { hashHistory } from 'react-router';
 
 class Update extends React.Component {
-  constructor(props){
-    super(props);
+  constructor(){
+    super();
     this.state = {
-      email: "",
-      username: "",
       buttonText: "Update",
       flash: null,
-      errors: []
+      errors: [],
+      email: "",
+      username: ""
     }
-    this.handleEmailChange    = this.handleEmailChange.bind(this)
-    this.handleUsernameChange = this.handleUsernameChange.bind(this)
-    this.handleUpdate         = this.handleUpdate.bind(this)
+    this.handleUpdate = this.handleUpdate.bind(this)
   }
   componentWillMount() {
-    this.fetchUserData();
+    this.fetchUsersData();
   }
-  fetchUserData() {
+  //We fetch User's data to auto fill the update form.
+  fetchUsersData() {
     let accessToken = sessionStorage.getItem('TOKEN_STORAGE_KEY');
     $.ajax({
       type: 'GET',
@@ -37,32 +34,28 @@ class Update extends React.Component {
       },
     });
   }
-  handleEmailChange(event) {
-    this.setState({email: event.target.value})
-  }
-  handleUsernameChange(event) {
-    this.setState({username: event.target.value})
-  }
   handleUpdate(e) {
-    let accessToken = sessionStorage.getItem('TOKEN_STORAGE_KEY');
     e.preventDefault();
+    let accessToken = sessionStorage.getItem('TOKEN_STORAGE_KEY');
     this.setState({buttonText: "Updating..."})
     $.ajax({
       type: 'PATCH',
       url: 'http://localhost:4000/api/users/'+encodeURIComponent(accessToken),
       data: {
-          user:{
-            username: this.state.username,
-            email: this.state.email,
-        }},
+        user:{
+          username: this.state.username,
+          email: this.state.email,
+      }},
       success: function(data) {
         this.setState({buttonText: "Update"})
         console.log(data);
-        this.props.setUser(data);
+        this.props.actions.setUser(data);
         this.setState({flash: data.flash})
+        this.setState({errors: []}) //Just in case we are updating after a previous error
+        window.setTimeout(() => this.setState({flash: null}), 1000);
       }.bind(this),
       error: function(error) {
-        console.log("original error: ", error);
+        console.log("errors: ", error);
         this.setState({buttonText: "Update"})
         //Parse the error to an object so we can loop over it.
         let errors = JSON.parse(error.responseText)
@@ -71,7 +64,8 @@ class Update extends React.Component {
         console.log("errors are: ", errors)
         let errorsArray = [];
         for(var key in errors) {
-          //If array is bigger than one we need to split it.
+          //If array is bigger than one we need to split it. In this case email might receive
+          //an array that consists of two errors.
           if(errors[key].length > 1) {
             errors[key].map(error => errorsArray.push(`${key} ${error}`));
           } else {
@@ -85,8 +79,8 @@ class Update extends React.Component {
   }
   render(){
     return (
-      <div className="col-md-3" style={styles.divRegisterStyle}>
-        {this.state.flash}
+      <div className="col-md-3 update">
+        {this.state.flash ? <p className="alert alert-success"> {this.state.flash} </p> : null}
         <Errors errors={this.state.errors}/>
         <form>
           <div className="form-group">
@@ -95,7 +89,7 @@ class Update extends React.Component {
               type="email"
               placeholder="Email"
               value={this.state.email}
-              onChange={this.handleEmailChange} />
+              onChange={e => this.setState({email: e.target.value})} />
           </div>
           <div className="form-group">
             <input
@@ -103,7 +97,7 @@ class Update extends React.Component {
               type="text"
               placeholder="Username"
               value={this.state.username}
-              onChange={this.handleUsernameChange} />
+              onChange={e => this.setState({username: e.target.value})} />
           </div>
           <button type="submit" className="btn btn-success" onClick={this.handleUpdate}>
             {this.state.buttonText}
@@ -114,16 +108,15 @@ class Update extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-}
-
+//Anything returned from this function will end up as props.actions and would be available
+//to use in our component. This is how we can send actions.
 let mapDispatchToProps = (dispatch) => {
   return {
-    setUser: (user) => { dispatch(setUser(user)) }
+    actions: {
+      setUser: (user) => { dispatch(setUser(user)) }
+    }
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Update);
+//FIrst argument always is "mapStateToProps", but since we don't need to subscribe to Redux state
+//we just pass null instead.
+export default connect(null, mapDispatchToProps)(Update);

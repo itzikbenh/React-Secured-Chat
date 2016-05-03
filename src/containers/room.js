@@ -80,6 +80,7 @@ class Room extends React.Component {
         //any existing messages for that specific room/channel and we will render them with
         //renderMessages function.
         this.state.channel.join()
+          //I'm setting timeout on purpose to demonstrate how the loading spinner works
           .receive("ok", resp => { setTimeout(() => (this.renderMessages(resp.messages)), 2000) })
           .receive("error", resp => { console.log("Unable to join", resp) })
         //We create this event listener that will listen to "new_msg" broadcasting events.

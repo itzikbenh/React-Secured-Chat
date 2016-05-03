@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from '../styles/style';
 import Errors from '../components/errors';
 import { connect } from 'react-redux';
 import { setUser } from '../actions/index';
@@ -9,18 +8,17 @@ class Register extends React.Component {
   constructor(){
     super();
     this.state = {
+      buttonText: "Register",
       email: "",
-      username:"",
+      errors: [], //errors that might come from the backend
       password: "",
       password_confirmation: "",
-      buttonText: "Register",
-      //errors that might come from the backend
-      errors: [],
+      username:"",
       //Temporary fields to store errors that we handle on the client side.
-      usernameError: "",
       emailError: "",
       passwordError: "",
-      password_confirmationError: ""
+      password_confirmationError: "",
+      usernameError: "",
     }
     this.handleEmailChange                = this.handleEmailChange.bind(this)
     this.handleUserNameChange             = this.handleUserNameChange.bind(this)
@@ -72,7 +70,7 @@ class Register extends React.Component {
         this.setState({password_confirmationError: ""})
     }
   }
-  //Will make sure all inputs are vaid and send the data to the backend
+  //Will make sure all inputs are valid and send the data to the backend
   handleRegistration(e) {
     e.preventDefault();
 
@@ -89,21 +87,18 @@ class Register extends React.Component {
     $.ajax({
       type: 'POST',
       url: "http://localhost:4000/api/users",
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader("Accept", "application/json");
-      },
       data: {
-          user:{
-            username: this.state.username,
-            email: this.state.email,
-            password: this.state.password,
-            password_confirmation: this.state.password_confirmation,
-        }},
+        user:{
+          email: this.state.email,
+          username: this.state.username,
+          password: this.state.password,
+          password_confirmation: this.state.password_confirmation,
+      }},
       success: function(data) {
         console.log(data);
         let accessToken = data.token;
         sessionStorage.setItem('TOKEN_STORAGE_KEY', accessToken);
-        this.props.setUser(data);
+        this.props.actions.setUser(data);
         hashHistory.push('/')
       }.bind(this),
       error: function(error) {
@@ -115,12 +110,7 @@ class Register extends React.Component {
         console.log("errors are: ", errors)
         let errorsArray = [];
         for(var key in errors) {
-          //If array is bigger than one we need to split it.
-          if(errors[key].length > 1) {
-            errors[key].map(error => errorsArray.push(`${key} ${error}`));
-          } else {
-            errorsArray.push(`${key} ${errors[key]}`);
-          }
+          errorsArray.push(`${key} ${errors[key]}`);
         }
         //Now we can set the array of errors we created.
         this.setState({errors: errorsArray})
@@ -129,11 +119,11 @@ class Register extends React.Component {
   }
   render(){
     return (
-      <div className="col-md-4" style={styles.divRegisterStyle}>
+      <div className="register col-md-4">
         <Errors errors={this.state.errors}/>
         <form>
           <div className="form-group">
-            <p style={styles.errorsRegisterStyle}>{this.state.emailError}</p>
+            <p className="registerFormErrors">{this.state.emailError}</p>
             <input
               className ="form-control"
               type="email"
@@ -143,7 +133,7 @@ class Register extends React.Component {
           </div>
 
           <div className="form-group">
-            <p style={styles.errorsRegisterStyle}>{this.state.usernameError}</p>
+            <p className="registerFormErrors">{this.state.usernameError}</p>
             <input
               className ="form-control"
               type="text"
@@ -153,7 +143,7 @@ class Register extends React.Component {
           </div>
 
           <div className="form-group">
-            <p style={styles.errorsRegisterStyle}>{this.state.passwordError}</p>
+            <p className="registerFormErrors">{this.state.passwordError}</p>
             <input
               className ="form-control"
               type="password"
@@ -161,8 +151,9 @@ class Register extends React.Component {
               value={this.state.password}
               onChange={this.handlePasswordChange} />
           </div>
+
           <div className="form-group">
-            <p style={styles.errorsRegisterStyle}>{this.state.password_confirmationError}</p>
+            <p className="registerFormErrors">{this.state.password_confirmationError}</p>
             <input
               className ="form-control"
               type="password"
@@ -170,6 +161,7 @@ class Register extends React.Component {
               value={this.state.password_confirmation}
               onChange={this.handlePasswordConfirmationChange} />
           </div>
+
           <button type="submit" className="btn btn-success" onClick={this.handleRegistration}>
             {this.state.buttonText}
           </button>
@@ -179,16 +171,15 @@ class Register extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-}
-
+//Anything returned from this function will end up as props.actions and would be available
+//to use in our component. This is how we can send actions.
 let mapDispatchToProps = (dispatch) => {
   return {
-    setUser: (user) => { dispatch(setUser(user)) }
+    actions: {
+      setUser: (user) => { dispatch(setUser(user)) }
+    }
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+//FIrst argument always is "mapStateToProps", but since we don't need to subscribe to Redux state
+//we just pass null instead.
+export default connect(null, mapDispatchToProps)(Register);

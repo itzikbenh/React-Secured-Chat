@@ -15,14 +15,15 @@ class Rooms extends React.Component {
       room: "",
     }
     this.handleCreateRoom = this.handleCreateRoom.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
+    this.handleDelete     = this.handleDelete.bind(this)
   }
   componentWillMount() {
     //Redux action to getRooms for the user.
     this.props.actions.getRooms();
   }
 
-  handleCreateRoom() {
+  handleCreateRoom(e) {
+    e.preventDefault(e)
     //At this point we ensured user is logged in so we have his token available
     //in the sessionStorage
     let accessToken = sessionStorage.getItem('TOKEN_STORAGE_KEY');
@@ -44,7 +45,7 @@ class Rooms extends React.Component {
         this.props.actions.addRoom(room);
       }.bind(this),
       error: function(error) {
-        console.log("original error: ", error);
+        console.log("error: ", error);
         this.setState({buttonText: "Create"})
         //Parse the error to an object so we can loop over it.
         let errors = JSON.parse(error.responseText)
@@ -61,7 +62,7 @@ class Rooms extends React.Component {
     });
   }
   handleDelete(room, index) {
-    console.log(`room to delete is: ${room}, at index: ${index}`);
+    console.log("room to delete is: " + room + "," + " at index:" + index);
     let accessToken = sessionStorage.getItem('TOKEN_STORAGE_KEY');
     $.ajax({
       type: 'DELETE',
@@ -74,7 +75,7 @@ class Rooms extends React.Component {
         this.props.actions.deleteRoom(index)
       }.bind(this),
       error: function(error) {
-        console.log("original error: ", error);
+        console.log(`error: ${error}`);
       }.bind(this),
     });
   }
@@ -88,7 +89,7 @@ class Rooms extends React.Component {
               <input
                 className ="form-control"
                 type="text"
-                placeholder="Add room name"
+                placeholder="Create room"
                 value={this.state.room}
                 onChange={e => this.setState({ room: e.target.value })} />
             </div>
@@ -112,6 +113,7 @@ const RoomsList = (props) => {
             <Link to={"/rooms/"+room.name.toLowerCase()}>
               {room.name}
             </Link>
+            {/* If user is the creator of the room we will allow him to delete the room */}
             {room.userId === props.userId ?
               <button onClick={props.handleDelete.bind(this, room.name, i)} className="fa fa-trash-o pull-right" aria-hidden="true">
               </button>

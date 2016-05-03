@@ -8,7 +8,6 @@ const user = (state = initialState , action) => {
       return Object.assign({}, state, {
         id: action.id,
         username: action.username,
-        email: action.email,
         isLoggedIn: true,
       })
     case 'LOGOUT_USER':
