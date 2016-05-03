@@ -1,12 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux'
-import { setUser, setMessagesList, addMessage, logOutUser, resetMessagesState} from '../actions/index';
-import { hashHistory } from 'react-router';
 import CircularProgress from 'material-ui/lib/circular-progress';
+import { connect } from 'react-redux'
+import { setUser, setMessagesList, addMessage, logOutUser, resetMessagesState } from '../actions/index';
+import { hashHistory } from 'react-router';
 //This file was copied from the Phoenix project.
 import { Socket } from "../phoenix";
 
-//Rooms component. Here we verify the user and on success we connect to the channel
+//Room component. Here we verify the user and on success we connect to the channel
 //based on the URL param.
 class Room extends React.Component {
   constructor(){
@@ -171,6 +171,7 @@ const Messages = (props) => {
 }
 
 //We subscribe to Redux state. For our purposes we only need the messages state.
+//which consists af array of messages and isLoading boolean value.
 let mapStateToProps = (state) => {
   return {
     messages: state.messages.messages,
@@ -187,7 +188,7 @@ let mapDispatchToProps = (dispatch) => {
       logOutUser: () => { dispatch(logOutUser()) },
       resetMessagesState: () => { dispatch(resetMessagesState()) },
       setMessagesList: (messages) => { dispatch(setMessagesList(messages)) },
-      setUser: (user) => { dispatch(setUser(user)) },
+      setUser: (user) => { dispatch(setUser(user)) }
     }
   }
 }

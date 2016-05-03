@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles/style';
+import Errors from '../components/errors';
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux';
 import { setUser } from '../actions/index';
 import { hashHistory } from 'react-router';
 
@@ -112,14 +112,6 @@ class Update extends React.Component {
        </div>
     );
   }
-}
-
-const Errors = (props) => {
-  return (
-      <div className="errors">
-        {props.errors.map((error, i) => <li className="list-group-item list-group-item-danger" key={i}> {error} </li>)}
-      </div>
-  );
 }
 
 let mapStateToProps = (state) => {

@@ -1,9 +1,21 @@
-const rooms = (state = [] , action) => {
+let initialState = {
+  rooms: [],
+}
+
+const rooms = (state = initialState , action) => {
   switch (action.type) {
     case 'SET_ROOMS_LIST':
-      return action.rooms
+      return Object.assign({}, state, {
+        rooms: action.rooms
+      })
     case 'ADD_ROOM':
-      return state.concat(action.room)
+      return Object.assign({}, state, {
+        rooms: state.rooms.concat(action.room)
+      })
+    case 'DELETE_ROOM':
+      return Object.assign({}, state, {
+        rooms: state.rooms.slice(0, action.index).concat(state.rooms.slice(action.index + 1))
+      })
     default:
       return state;
   }

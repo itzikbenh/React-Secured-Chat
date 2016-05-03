@@ -6,6 +6,7 @@ const user = (state = initialState , action) => {
   switch (action.type) {
     case 'SET_USER':
       return Object.assign({}, state, {
+        id: action.id,
         username: action.username,
         email: action.email,
         isLoggedIn: true,

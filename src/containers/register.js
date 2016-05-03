@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../styles/style';
+import Errors from '../components/errors';
 import { connect } from 'react-redux';
 import { setUser } from '../actions/index';
 import { hashHistory } from 'react-router';
@@ -176,17 +177,6 @@ class Register extends React.Component {
        </div>
     );
   }
-}
-
-//Stateless component for errors storage. This will hold the backend errors.
-//We handle error validation in client side, but incase of "username taken" or invalid email format
-//the backend will handle it for us
-const Errors = (props) => {
-  return (
-      <div className="errors">
-        {props.errors.map((error, i) => <li className="list-group-item list-group-item-danger" key={i}> {error} </li>)}
-      </div>
-  );
 }
 
 let mapStateToProps = (state) => {

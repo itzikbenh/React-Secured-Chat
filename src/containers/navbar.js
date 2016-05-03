@@ -2,8 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { logOutUser } from '../actions/index';
 import { hashHistory, Link } from 'react-router';
-import { store } from './App';
-
 
 class NavBar extends React.Component {
   handleLogout(e) {

@@ -3,6 +3,7 @@ import { hashHistory } from 'react-router'
 export const setUser = (user) => {
   return {
     type: 'SET_USER',
+    id: user.id,
     username: user.username,
     email: user.email
   }
@@ -25,6 +26,13 @@ export const addRoom = (room) => {
   return {
     type: 'ADD_ROOM',
     room: room
+  }
+}
+
+export const deleteRoom = (index) => {
+  return {
+    type: 'DELETE_ROOM',
+    index: index
   }
 }
 
@@ -56,7 +64,12 @@ export function getRooms() {
       url: "http://localhost:4000/api/rooms/",
       success: function(data) {
         console.log("data is: ", data);
-        let rooms = data.rooms.map(room => room.name)
+        let rooms = data.rooms.map(room => {
+          return {name: room.name, userId: room.user_id}
+        });
+        console.log("rooms now: ", rooms)
+        //Once we got the rooms we will send an action to set them which
+        //cause the rooms view to rerender since it subscribed to the rooms state
         dispatch(setRoomsList(rooms));
       },
       error: function(error) {

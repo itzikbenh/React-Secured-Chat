@@ -42,3 +42,10 @@ nav ul li a:hover, .active {
   list-style: none;
   padding: 5px;
 }
+
+.fa-trash-o {
+  background: none;
+  border: none;
+  outline: none;
+  color: red;
+}

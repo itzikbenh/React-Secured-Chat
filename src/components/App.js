@@ -5,14 +5,14 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from '../reducers';
 
-import Register from './register';
-import Rooms from './rooms';
-import Room from './room';
-import Update from './update';
-import Update_password from './update_password';
-import Login from './login';
-import Welcome from './welcome';
-import Template from './app-template';
+import Register from '../containers/register';
+import Rooms from '../containers/rooms';
+import Room from '../containers/room';
+import Update from '../containers/update';
+import Update_password from '../containers/update_password';
+import Login from '../containers/login';
+import Welcome from '../containers/welcome';
+import Template from '../containers/app-template';
 import { verifyUserToken } from '../actions/index';
 
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
@@ -22,8 +22,6 @@ const store = createStore(
   rootReducer,
   applyMiddleware(thunkMiddleware)
 );
-
-console.log("hello from app")
 
 export default () => {
   const requireLogin = () => {
